@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePass - Password Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page" class="page active">
+        <header>
+            <div class="container">
+                <h1>🔐 SecurePass</h1>
+                <p>Your secure password manager</p>
+            </div>
+        </header>
+        
+        <main>
+            <div class="container">
+                <section class="hero">
+                    <h2>Manage Your Passwords Securely</h2>
+                    <p>Store and manage all your passwords in one secure place with military-grade encryption.</p>
+                    <div class="cta-buttons">
+                        <button id="login-btn" class="btn btn-primary">Login</button>
+                        <button id="register-btn" class="btn btn-secondary">Register</button>
+                    </div>
+                </section>
+                
+                <section class="features">
+                    <div class="feature">
+                        <h3>🔒 Secure Encryption</h3>
+                        <p>Your passwords are encrypted with AES-256 encryption</p>
+                    </div>
+                    <div class="feature">
+                        <h3>🌐 Cross-Platform</h3>
+                        <p>Access your passwords from any device</p>
+                    </div>
+                    <div class="feature">
+                        <h3>⚡ Easy to Use</h3>
+                        <p>Simple and intuitive interface</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>Login to SecurePass</h2>
+                <p>Welcome back! Please login to your account.</p>
+            </div>
+            
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="#" id="go-to-register">Register here</a></p>
+                <p><a href="#" id="back-to-landing">← Back to home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Page -->
+    <div id="register-page" class="page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p>Join SecurePass to manage your passwords securely.</p>
+            </div>
+            
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" required placeholder="Choose a username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required placeholder="At least 8 characters">
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div class="strength-fill"></div>
+                        </div>
+                        <span class="strength-text">Very Weak</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-confirm-password">Confirm Password</label>
+                    <input type="password" id="register-confirm-password" required placeholder="Re-enter password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="#" id="go-to-login">Login here</a></p>
+                <p><a href="#" id="back-to-landing-2">← Back to home</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" class="page">
+        <header class="dashboard-header">
+            <div class="container">
+                <h1>🔐 SecurePass</h1>
+                <nav>
+                    <span id="welcome-user">Welcome, User!</span>
+                    <button id="logout-btn" class="btn btn-outline">Logout</button>
+                </nav>
+            </div>
+        </header>
+        
+        <main class="dashboard-main">
+            <div class="container">
+                <div class="dashboard-actions">
+                    <button id="add-password-btn" class="btn btn-primary">➕ Add New Password</button>
+                    <!-- Search Box is missing from the original snippet but added here for completeness -->
+                    <div class="search-box">
+                        <input type="text" id="search-passwords" placeholder="Search passwords...">
+                    </div>
+                </div>
+
+                <div class="passwords-grid" id="passwords-container">
+                    <!-- Password cards will be rendered here by JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Modals for Add/Edit Password (Missing from user's snippet, added here for functionality) -->
+        <div id="password-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modal-title">Add New Password</h2>
+                
+                <form id="password-form">
+                    <input type="hidden" id="entry-id">
+                    <div class="form-group">
+                        <label for="entry-title">Title (e.g., Google, Amazon)</label>
+                        <input type="text" id="entry-title" required placeholder="Website or Service Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-username">Username/Email</label>
+                        <input type="text" id="entry-username" placeholder="Username or Email Address">
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-password">Password</label>
+                        <div class="password-input-group">
+                            <input type="password" id="entry-password" required placeholder="Enter or Generate Password">
+                            <button type="button" class="btn btn-small btn-secondary" id="generate-password">Generate</button>
+                            <button type="button" class="btn btn-small btn-outline" id="toggle-password">Show</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-website">Website URL</label>
+                        <input type="url" id="entry-website" placeholder="https://example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-category">Category</label>
+                        <select id="entry-category">
+                            <option value="General">General</option>
+                            <option value="Social">Social</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Work">Work</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="entry-notes">Notes</label>
+                        <textarea id="entry-notes" rows="3" placeholder="Any important notes..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+     <a href='https://www.counters-free.net/'>free Counters</a> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=b69b0351be7eedd43258c53b4042ca5d282a3b66'></script>
+<script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1445254/t/0"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
