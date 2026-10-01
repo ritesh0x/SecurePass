@@ -1,89 +1,191 @@
-.auth-container {
-    max-width: 400px;
-    margin: 2rem auto;
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
+/* ============================================================
+   SecurePass - Modern Authentication Styles
+   ============================================================ */
+
+.auth-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 72px);
+    padding: 40px 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 460px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
+    animation: authPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authPop {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .auth-header {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    padding: 2rem;
+    padding: 32px 32px 20px;
     text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.auth-icon-circle {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 1.5rem;
+    color: #fff;
+    box-shadow: 0 4px 16px var(--primary-glow);
 }
 
 .auth-header h2 {
-    margin-bottom: 0.5rem;
-    font-size: 1.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
 }
 
 .auth-header p {
-    opacity: 0.9;
+    color: var(--text-muted);
+    font-size: 0.9rem;
 }
 
 .auth-form {
-    padding: 2rem;
+    padding: 28px 32px 32px;
 }
 
+.input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon-wrapper input {
+    width: 100%;
+    padding: 12px 42px 12px 40px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.input-icon-wrapper input:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    pointer-events: none;
+}
+
+.btn-input-icon {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.95rem;
+    padding: 4px;
+    transition: var(--transition);
+}
+
+.btn-input-icon:hover {
+    color: #fff;
+}
+
+/* Password Strength Meter */
+.password-strength-container {
+    margin-top: 10px;
+}
+
+.strength-bar-track {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.strength-bar-progress {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-very-weak .strength-bar-progress { width: 15%; background-color: var(--danger); }
+.strength-weak .strength-bar-progress { width: 35%; background-color: #f97316; }
+.strength-medium .strength-bar-progress { width: 60%; background-color: var(--warning); }
+.strength-strong .strength-bar-progress { width: 85%; background-color: #3b82f6; }
+.strength-very-strong .strength-bar-progress { width: 100%; background-color: var(--success); }
+
+.strength-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+}
+
+.strength-hint {
+    color: var(--text-dim);
+}
+
+.strength-text {
+    font-weight: 700;
+}
+
+.strength-very-weak .strength-text { color: var(--danger); }
+.strength-weak .strength-text { color: #f97316; }
+.strength-medium .strength-text { color: var(--warning); }
+.strength-strong .strength-text { color: #3b82f6; }
+.strength-very-strong .strength-text { color: var(--success); }
+
+/* Auth Footer */
 .auth-footer {
-    padding: 1.5rem 2rem;
+    padding: 18px 32px;
+    background: rgba(15, 23, 42, 0.4);
+    border-top: 1px solid var(--border-color);
     text-align: center;
-    background: var(--gray-light);
-    border-top: 1px solid #dee2e6;
+    font-size: 0.9rem;
+    color: var(--text-muted);
 }
 
 .auth-footer a {
-    color: var(--primary);
+    color: #818cf8;
     text-decoration: none;
     font-weight: 600;
 }
 
 .auth-footer a:hover {
     text-decoration: underline;
+    color: #a5b4fc;
 }
 
-/* Password strength indicator */
-.password-strength {
-    margin-top: 0.5rem;
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 0.825rem;
+    color: var(--text-dim) !important;
 }
 
-.strength-bar {
-    height: 4px;
-    background: var(--gray-light);
-    border-radius: 2px;
-    margin-bottom: 0.25rem;
-    overflow: hidden;
-}
-
-.strength-fill {
-    height: 100%;
-    width: 0%;
-    transition: var(--transition);
-}
-
-.strength-text {
-    font-size: 0.875rem;
-    color: var(--gray);
-}
-
-.strength-weak .strength-fill {
-    background: var(--danger);
-    width: 25%;
-}
-
-.strength-medium .strength-fill {
-    background: var(--warning);
-    width: 50%;
-}
-
-.strength-strong .strength-fill {
-    background: var(--success);
-    width: 75%;
-}
-
-.strength-very-strong .strength-fill {
-    background: #28a745;
-    width: 100%;
+.back-link:hover {
+    color: #cbd5e1 !important;
 }

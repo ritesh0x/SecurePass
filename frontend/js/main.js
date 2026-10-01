@@ -1,9 +1,10 @@
-// Main application controller
+// Main Application Controller & Toast System
 class PasswordManager {
     constructor() {
         this.currentUser = null;
         this.masterKey = null;
         this.passwords = [];
+        this.isAdminView = false;
         this.init();
     }
 
@@ -13,23 +14,49 @@ class PasswordManager {
     }
 
     bindEvents() {
-        // Navigation
-        document.getElementById('login-btn').addEventListener('click', () => this.showPage('login-page'));
-        document.getElementById('register-btn').addEventListener('click', () => this.showPage('register-page'));
-        document.getElementById('go-to-register').addEventListener('click', () => this.showPage('register-page'));
-        document.getElementById('go-to-login').addEventListener('click', () => this.showPage('login-page'));
-        document.getElementById('back-to-landing').addEventListener('click', () => this.showPage('landing-page'));
-        document.getElementById('back-to-landing-2').addEventListener('click', () => this.showPage('landing-page'));
+        // Navigation events
+        const bindClick = (id, callback) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('click', callback);
+        };
+
+        bindClick('login-btn', () => this.showPage('login-page'));
+        bindClick('register-btn', () => this.showPage('register-page'));
+        bindClick('nav-login-btn', () => this.showPage('login-page'));
+        bindClick('nav-register-btn', () => this.showPage('register-page'));
+        bindClick('go-to-register', () => this.showPage('register-page'));
+        bindClick('go-to-login', () => this.showPage('login-page'));
+        bindClick('back-to-landing', () => this.showPage('landing-page'));
+        bindClick('back-to-landing-2', () => this.showPage('landing-page'));
         
+        // Admin Panel Toggle
+        bindClick('admin-panel-toggle-btn', () => this.showAdminView());
+        bindClick('back-to-vault-btn', () => this.showVaultView());
+
+        // Brand home click
+        document.querySelectorAll('.brand').forEach(el => {
+            el.addEventListener('click', () => {
+                if (this.currentUser) {
+                    this.showDashboard();
+                } else {
+                    this.showPage('landing-page');
+                }
+            });
+        });
+
         // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => this.logout());
+        bindClick('logout-btn', () => this.logout());
     }
 
     showPage(pageId) {
         document.querySelectorAll('.page').forEach(page => {
             page.classList.remove('active');
         });
-        document.getElementById(pageId).classList.add('active');
+        const target = document.getElementById(pageId);
+        if (target) {
+            target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }
 
     checkAuthStatus() {
@@ -37,21 +64,67 @@ class PasswordManager {
         if (userData) {
             try {
                 const user = JSON.parse(userData);
-                this.currentUser = user;
-                this.masterKey = user.master_key;
-                this.showDashboard();
+                if (user && user.id && user.master_key) {
+                    this.currentUser = user;
+                    this.masterKey = user.master_key;
+                    this.showDashboard();
+                    return;
+                }
             } catch (e) {
                 console.error('Error parsing stored user data:', e);
                 localStorage.removeItem('currentUser');
             }
         }
+        this.showPage('landing-page');
     }
 
     showDashboard() {
         this.showPage('dashboard-page');
-        document.getElementById('welcome-user').textContent = `Welcome, ${this.currentUser.username}!`;
-        if (typeof dashboard !== 'undefined') {
+        const userEl = document.getElementById('welcome-user');
+        const roleBadge = document.getElementById('user-role-badge');
+        const adminBtn = document.getElementById('admin-panel-toggle-btn');
+
+        if (userEl && this.currentUser) {
+            userEl.textContent = this.currentUser.username || 'User';
+        }
+
+        const isAdmin = (this.currentUser && this.currentUser.role === 'admin');
+        if (roleBadge) {
+            roleBadge.style.display = isAdmin ? 'inline-block' : 'none';
+        }
+        if (adminBtn) {
+            adminBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+        }
+
+        this.showVaultView();
+    }
+
+    showVaultView() {
+        const vaultSection = document.getElementById('vault-view-section');
+        const adminSection = document.getElementById('admin-view-section');
+        if (vaultSection) vaultSection.style.display = 'block';
+        if (adminSection) adminSection.style.display = 'none';
+        this.isAdminView = false;
+
+        if (typeof dashboard !== 'undefined' && dashboard.loadPasswords) {
             dashboard.loadPasswords();
+        }
+    }
+
+    showAdminView() {
+        if (!this.currentUser || this.currentUser.role !== 'admin') {
+            this.showAlert('Unauthorized access', 'error');
+            return;
+        }
+
+        const vaultSection = document.getElementById('vault-view-section');
+        const adminSection = document.getElementById('admin-view-section');
+        if (vaultSection) vaultSection.style.display = 'none';
+        if (adminSection) adminSection.style.display = 'block';
+        this.isAdminView = true;
+
+        if (typeof dashboard !== 'undefined' && dashboard.loadAdminUsers) {
+            dashboard.loadAdminUsers();
         }
     }
 
@@ -59,48 +132,60 @@ class PasswordManager {
         this.currentUser = null;
         this.masterKey = null;
         this.passwords = [];
+        this.isAdminView = false;
         localStorage.removeItem('currentUser');
+        this.showAlert('Logged out successfully', 'info');
         this.showPage('landing-page');
     }
 
+    // Modern Toast Notification System
     showAlert(message, type = 'success') {
-        // Remove existing alerts
-        const existingAlert = document.querySelector('.alert');
-        if (existingAlert) {
-            existingAlert.remove();
-        }
+        const container = document.getElementById('toast-container');
+        if (!container) return;
 
-        const alert = document.createElement('div');
-        alert.className = `alert alert-${type}`;
-        alert.textContent = message;
-        alert.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            padding: 15px 20px;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            max-width: 400px;
-            ${type === 'success' ? 'background: #28a745;' : 'background: #dc3545;'}
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+
+        let iconClass = 'fa-circle-check';
+        if (type === 'error') iconClass = 'fa-circle-exclamation';
+        if (type === 'info') iconClass = 'fa-circle-info';
+
+        toast.innerHTML = `
+            <i class="fa-solid ${iconClass} toast-icon"></i>
+            <span class="toast-message">${this.escapeHtml(message)}</span>
+            <button type="button" class="toast-close" title="Dismiss">&times;</button>
         `;
 
-        document.body.appendChild(alert);
+        toast.querySelector('.toast-close').addEventListener('click', () => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(50px)';
+            setTimeout(() => toast.remove(), 250);
+        });
+
+        container.appendChild(toast);
 
         setTimeout(() => {
-            if (alert.parentNode) {
-                alert.remove();
+            if (toast.parentNode) {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(50px)';
+                setTimeout(() => toast.remove(), 250);
             }
-        }, 5000);
+        }, 4500);
     }
 
-    // API call helper
+    escapeHtml(unsafe) {
+        if (!unsafe) return '';
+        return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // Unified API Fetch Helper
     async apiCall(endpoint, data) {
-        console.log(`API Call to ${endpoint}:`, { ...data, password: data.password ? '***' : undefined });
-        
         try {
-            // *** FIX APPLIED HERE: Added ../ to move up from 'frontend/' to 'securepass/' ***
             const response = await fetch(`../backend/api/${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -109,28 +194,24 @@ class PasswordManager {
                 body: JSON.stringify(data)
             });
 
-            // Check if the response is actually HTML/Text instead of JSON
-            const contentType = response.headers.get("content-type");
-            if (!contentType || !contentType.includes("application/json")) {
-                const text = await response.text();
-                // Throw the raw response text as an error message for debugging
-                throw new Error("Server did not return JSON. Response was: " + text.substring(0, 100) + "...");
+            const text = await response.text();
+            let result;
+            try {
+                result = JSON.parse(text);
+            } catch (e) {
+                throw new Error("Server returned non-JSON: " + text.substring(0, 150));
             }
 
-            const result = await response.json();
-            console.log(`API Response from ${endpoint}:`, result);
-            
             return result;
-            
         } catch (error) {
-            console.error('API call failed:', error);
+            console.error(`API Call failed on ${endpoint}:`, error);
             return {
                 success: false,
-                message: 'Network error: ' + error.message
+                message: error.message || 'Network error occurred'
             };
         }
     }
 }
 
-// Initialize the application
+// Global App Instance
 const app = new PasswordManager();

@@ -68,6 +68,7 @@ try {
             if ($user->create()) {
                 $response["success"] = true;
                 $response["message"] = "Registration successful! You can now login.";
+                $response["role"] = $user->role;
             } else {
                 throw new Exception("Failed to create user account");
             }
@@ -88,6 +89,7 @@ try {
                 $response["data"] = [
                     "user_id" => $user->id,
                     "username" => $user->username,
+                    "role" => $user->role,
                     "master_key" => $masterKey
                 ];
             } else {
